@@ -1,4 +1,4 @@
-# Universal CRUD API (FastAPI + MongoDB)
+# Mongo Creed (A Crud api) (FastAPI + MongoDB)
 
 A high‑performance, schema‑agnostic REST API for any MongoDB collection. Async-first, production‑ready, and configurable exclusively via .env. This repository contains only the production-ready application code for the universal API.
 
