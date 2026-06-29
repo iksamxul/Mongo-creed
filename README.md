@@ -1,7 +1,9 @@
-Universal CRUD API Core
-The core FastAPI CRUD service for MongoDB. This repository contains only the production-ready application code for the universal API.
+# Universal CRUD API (FastAPI + MongoDB)
 
-Python 3.11+ FastAPI License: MIT
+A high‑performance, schema‑agnostic REST API for any MongoDB collection. Async-first, production‑ready, and configurable exclusively via .env. This repository contains only the production-ready application code for the universal API.
+
+
+
 
 About
 Universal CRUD API Core provides a dynamic, schema-agnostic REST interface for any MongoDB collection. It delivers clean, optimized application code without scaffolding, examples, or containerization.
@@ -60,11 +62,16 @@ MONGODB_URI=mongodb://localhost:27017
 MONGODB_DB=appdb
 PORT=8000
 
-Installation
-# Create venv and install
+Quick Start
+```bash
 python -m venv .venv
-. .venv/bin/activate  # Windows: .venv\\Scripts\\Activate.ps1
+# macOS/Linux
+source .venv/bin/activate
+# Windows (PowerShell)
+# .venv\\Scripts\\Activate.ps1
 pip install -r requirements.txt
+python run.py
+```
 
 Running
 # Start MongoDB separately
