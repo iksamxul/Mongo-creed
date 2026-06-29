@@ -113,4 +113,4 @@ Serialization          ORJSON
 Max page size          1000 (configurable via query)
 
 License
-© 2026 Sam
+©Ahoy 2026 - Sam
