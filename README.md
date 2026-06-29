@@ -17,13 +17,14 @@ Quick Overview
 - High throughput: ORJSON responses, FastAPI on Uvicorn
 
 File Structure
+```text
 ├── app/
 │   ├── main.py                  # FastAPI app and lifespan
 │   ├── api/
-│   │   ├── routes.py            # Universal CRUD endpoints
+│   │   └── routes.py            # Universal CRUD endpoints
 │   ├── core/
 │   │   ├── config.py            # .env configuration loader
-│   │   └── db.py                # Mongo connection lifecycle
+│   │   ├── db.py                # Mongo connection lifecycle
 │   │   └── errors.py            # Centralized error handling
 │   ├── repositories/
 │   │   └── universal_repository.py  # Generic Mongo repository
@@ -34,6 +35,7 @@ File Structure
 ├── requirements.txt             # Python dependencies
 ├── .gitignore                   # Git ignore patterns
 └── run.py                       # Starts server using .env PORT
+```
 
 Core Dependencies
 fastapi>=0.111.0
