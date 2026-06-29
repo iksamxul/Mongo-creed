@@ -1,84 +1,107 @@
-# Universal CRUD API (FastAPI + MongoDB)
+Universal CRUD API Core
+The core FastAPI CRUD service for MongoDB. This repository contains only the production-ready application code for the universal API.
 
-Author: Sam
+Python 3.11+ FastAPI License: MIT
 
-## Requirements
+About
+Universal CRUD API Core provides a dynamic, schema-agnostic REST interface for any MongoDB collection. It delivers clean, optimized application code without scaffolding, examples, or containerization.
+
+Quick Overview
+- Universal routing: Operates on any collection via path parameter
+- Async I/O: Motor-based non-blocking MongoDB access
+- Efficient reads: Pagination, optional sorting, JSON filter (q)
+- Strict config: .env-only configuration for URI, DB, and Port
+- Consistent errors: Centralized error handling with structured payloads
+- High throughput: ORJSON responses, FastAPI on Uvicorn
+
+File Structure
+├── app/
+│   ├── main.py                  # FastAPI app and lifespan
+│   ├── api/
+│   │   ├── routes.py            # Universal CRUD endpoints
+│   ├── core/
+│   │   ├── config.py            # .env configuration loader
+│   │   └── db.py                # Mongo connection lifecycle
+│   │   └── errors.py            # Centralized error handling
+│   ├── repositories/
+│   │   └── universal_repository.py  # Generic Mongo repository
+│   ├── controllers/
+│   │   └── universal_controller.py  # Request validation and orchestration
+│   └── utils/
+│       └── bson.py              # ObjectId conversion and serialization
+├── requirements.txt             # Python dependencies
+├── .gitignore                   # Git ignore patterns
+└── run.py                       # Starts server using .env PORT
+
+Core Dependencies
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+motor>=3.3.2
+pymongo>=4.7.0
+python-dotenv>=1.0.1
+orjson>=3.10.7
+pydantic>=2.7.0
+
+API Endpoints
+All endpoints use the /api prefix.
+
+Method  Endpoint                      Purpose
+GET     /api/{collection}             List documents with pagination, sort, filter
+GET     /api/{collection}/{id}        Fetch a single document by id
+POST    /api/{collection}             Create a document
+PUT     /api/{collection}/{id}        Replace a document
+PATCH   /api/{collection}/{id}        Partially update fields
+DELETE  /api/{collection}/{id}        Delete a document
+
+Configuration
+Use a .env file as the single source of truth:
+
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB=appdb
+PORT=8000
+
+Installation
+# Create venv and install
+python -m venv .venv
+. .venv/bin/activate  # Windows: .venv\\Scripts\\Activate.ps1
+pip install -r requirements.txt
+
+Running
+# Start MongoDB separately
+# Launch API
+python run.py
+
+Development
+- main.py: App factory and lifespan hooks (connect/disconnect)
+- core/config.py: Loads required settings from .env
+- core/db.py: Motor client and database handle
+- core/errors.py: AppError and exception handlers
+- repositories/universal_repository.py: Generic data access
+- controllers/universal_controller.py: Validation, id handling, orchestration
+- api/routes.py: HTTP endpoints (universal CRUD)
+
+Code Standards
 - Python 3.11+
-- MongoDB 6.0+
+- Type hints
+- Async-first I/O
+- DRY, modular structure
 
-## Setup
-1. Create a virtual environment and install dependencies
-   - Linux/macOS:
-     - python3 -m venv .venv
-     - source .venv/bin/activate
-     - pip install -r requirements.txt
-   - Windows (PowerShell):
-     - py -3 -m venv .venv
-     - .venv\\Scripts\\Activate.ps1
-     - pip install -r requirements.txt
-2. Configure .env (only source of configuration)
-   - MONGODB_URI=mongodb://localhost:27017
-   - MONGODB_DB=appdb
-   - PORT=8000
-3. Start MongoDB
-4. Run the API
-   - python run.py
+Integration
+Use as a standalone service via HTTP, or mount the router in another FastAPI app:
 
-Base URL: http://localhost:PORT/api
+from fastapi import FastAPI
+from app.api.routes import api_router
+from app.core.db import connect, disconnect
 
-## Endpoints (universal, pass any collection name)
-- GET /api/{collection}
-- GET /api/{collection}/{id}
-- POST /api/{collection}
-- PUT /api/{collection}/{id}
-- PATCH /api/{collection}/{id}
-- DELETE /api/{collection}/{id}
+app = FastAPI()
+app.include_router(api_router, prefix="/api")
 
-## Query Parameters (GET /api/{collection})
-- limit: 1..1000, default 20
-- offset: >= 0, default 0
-- sort: field name to sort by
-- order: asc|desc, default asc
-- q: JSON-encoded filter object
+Performance Characteristics
+Metric                 Value
+List latency           Depends on filter/index; paginated
+Single-item read       ~1 network round trip
+Serialization          ORJSON
+Max page size          1000 (configurable via query)
 
-Examples for q:
-- q={"status":"active"}
-- q={"price":{"$gte":10}}
-- q={"_id":"665f7c5c3a1b8e9e4c2d1a00"}
-
-URL-encode q when using curl or a browser.
-
-## Response Shapes
-- List: { "items": [...], "total": n, "limit": n, "offset": n }
-- Single: flattened document where Mongo _id is exposed as "id"
-- Errors: { "error": { "message": string, "details": any } }
-
-## cURL Examples (collection: widgets)
-Create
-- curl -s -X POST http://localhost:8000/api/widgets -H "Content-Type: application/json" -d '{"name":"alpha","status":"active"}'
-
-List with pagination and sort
-- curl -s "http://localhost:8000/api/widgets?limit=10&offset=0&sort=created_at&order=desc"
-
-Filter
-- curl -s "http://localhost:8000/api/widgets?q=%7B%22status%22%3A%22active%22%7D"
-
-Get by id
-- curl -s http://localhost:8000/api/widgets/{id}
-
-Replace
-- curl -s -X PUT http://localhost:8000/api/widgets/{id} -H "Content-Type: application/json" -d '{"name":"beta","status":"inactive"}'
-
-Patch
-- curl -s -X PATCH http://localhost:8000/api/widgets/{id} -H "Content-Type: application/json" -d '{"status":"active"}'
-
-Delete
-- curl -s -X DELETE http://localhost:8000/api/widgets/{id}
-
-## Notes
-- The API is schema-agnostic; any JSON object is accepted per collection.
-- "id" is a stringified ObjectId; do not send "_id" or "id" in POST/PUT/PATCH payloads.
-- created_at and updated_at are managed automatically.
-- Keep PORT, MONGODB_URI, and MONGODB_DB exclusively in .env.
-
-— Sam
+License
+© 2026 Sam
